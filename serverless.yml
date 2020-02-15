@@ -1,0 +1,31 @@
+service:
+  name: node-mailer
+
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+  dotenv:
+    path: .env
+    logging: false
+
+plugins:
+  - serverless-webpack
+  - serverless-dotenv-plugin
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: ap-south-1
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    SEND_ADDRESS: ${env:SEND_ADDRESS}
+    AWS_KEY_ID: ${env:AWS_KEY_ID}
+    AWS_KEY: ${env:AWS_KEY}
+
+functions:
+  hello:
+    handler: handler.mail
+    events:
+      - sqs:
+          arn: ${env:SQS_ARN}
